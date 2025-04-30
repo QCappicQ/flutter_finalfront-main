@@ -21,7 +21,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   final String baseUrl = 'https://finalback-sepia.vercel.app';
   bool isFavorite = false;
 
-  // ตัวแปรสำหรับจับเวลา
+  // ตัวจับเวลา
   Timer? _timer;
   int _seconds = 0;
   bool _isRunning = false;
@@ -35,11 +35,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   @override
   void dispose() {
-    _timer?.cancel(); // ยกเลิก Timer เมื่อ widget ถูก dispose
+    _timer?.cancel();
     super.dispose();
   }
 
-  // ฟังก์ชันเริ่มจับเวลา
+  // เริ่มจับเวลา
   void _startTimer() {
     if (!_isRunning) {
       _isRunning = true;
@@ -51,7 +51,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     }
   }
 
-  // ฟังก์ชันหยุดจับเวลา
+  // หยุดจับเวลา
   void _pauseTimer() {
     if (_isRunning) {
       _timer?.cancel();
@@ -60,7 +60,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     }
   }
 
-  // ฟังก์ชันรีเซ็ตจับเวลา
+  // รีเซ็ตเวลา
   void _resetTimer() {
     _timer?.cancel();
     setState(() {
@@ -69,7 +69,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     });
   }
 
-  // แปลงวินาทีเป็นรูปแบบ mm:ss
+  // แปลงวินาทีเป็นนาที
   String _formatTime(int seconds) {
     int minutes = (seconds ~/ 60);
     int remainingSeconds = seconds % 60;

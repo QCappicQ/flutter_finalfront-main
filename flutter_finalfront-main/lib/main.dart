@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Recipes App',
       theme: ThemeData(
-        primaryColor: Colors.black,
+        primaryColor: const Color.fromARGB(255, 35, 34, 34),
         scaffoldBackgroundColor: Colors.black87,
         colorScheme: const ColorScheme.dark(
           primary: Colors.black,
@@ -23,12 +23,12 @@ class MyApp extends StatelessWidget {
         ),
         textTheme: GoogleFonts.robotoTextTheme(
           Theme.of(context).textTheme.apply(
-                bodyColor: Colors.white,
-                displayColor: Colors.white,
-              ),
+            bodyColor: Colors.white,
+            displayColor: Colors.white,
+          ),
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black,
+          backgroundColor: Color.fromARGB(255, 9, 9, 9),
           foregroundColor: Colors.white,
           elevation: 4,
         ),
@@ -37,7 +37,9 @@ class MyApp extends StatelessWidget {
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
             textStyle: GoogleFonts.roboto(fontWeight: FontWeight.bold),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(

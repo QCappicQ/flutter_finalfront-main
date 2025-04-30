@@ -16,7 +16,10 @@ class _UpdateRecipeScreenState extends State<UpdateRecipeScreen> {
   final descriptionController = TextEditingController();
   final imageController = TextEditingController();
   List<Map<String, String>> ingredients = [];
+  List<TextEditingController> ingredientNameControllers = [];
+  List<TextEditingController> ingredientQuantityControllers = [];
   List<Map<String, String>> steps = [];
+  List<TextEditingController> stepControllers = [];
   final String baseUrl = 'https://finalback-sepia.vercel.app';
   bool isLoading = true;
   bool isSubmitting = false;
@@ -32,6 +35,15 @@ class _UpdateRecipeScreenState extends State<UpdateRecipeScreen> {
     titleController.dispose();
     descriptionController.dispose();
     imageController.dispose();
+    for (var controller in ingredientNameControllers) {
+      controller.dispose();
+    }
+    for (var controller in ingredientQuantityControllers) {
+      controller.dispose();
+    }
+    for (var controller in stepControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -58,11 +70,20 @@ class _UpdateRecipeScreenState extends State<UpdateRecipeScreen> {
               'quantity': i['quantity']?.toString() ?? '',
             }),
           );
+          ingredientNameControllers = ingredients
+              .map((ingredient) => TextEditingController(text: ingredient['name']))
+              .toList();
+          ingredientQuantityControllers = ingredients
+              .map((ingredient) => TextEditingController(text: ingredient['quantity']))
+              .toList();
           steps = List<Map<String, String>>.from(
             stepData.map((s) => {
               'instruction': s['instruction']?.toString() ?? '',
             }),
           );
+          stepControllers = steps
+              .map((step) => TextEditingController(text: step['instruction']))
+              .toList();
           isLoading = false;
         });
       } else {
@@ -79,20 +100,50 @@ class _UpdateRecipeScreenState extends State<UpdateRecipeScreen> {
   void _addIngredient() {
     setState(() {
       ingredients.add({'name': '', 'quantity': ''});
+      ingredientNameControllers.add(TextEditingController(text: ''));
+      ingredientQuantityControllers.add(TextEditingController(text: ''));
+    });
+  }
+
+  void _removeIngredient(int index) {
+    setState(() {
+      ingredients.removeAt(index);
+      ingredientNameControllers[index].dispose();
+      ingredientQuantityControllers[index].dispose();
+      ingredientNameControllers.removeAt(index);
+      ingredientQuantityControllers.removeAt(index);
     });
   }
 
   void _addStep() {
     setState(() {
       steps.add({'instruction': ''});
+      stepControllers.add(TextEditingController(text: ''));
+    });
+  }
+
+  void _removeStep(int index) {
+    setState(() {
+      steps.removeAt(index);
+      stepControllers[index].dispose();
+      stepControllers.removeAt(index);
     });
   }
 
   Future<void> _submit() async {
+    // อัปเดต ingredients และ steps จาก controllers ก่อน submit
+    for (int i = 0; i < ingredients.length; i++) {
+      ingredients[i]['name'] = ingredientNameControllers[i].text;
+      ingredients[i]['quantity'] = ingredientQuantityControllers[i].text;
+    }
+    for (int i = 0; i < steps.length; i++) {
+      steps[i]['instruction'] = stepControllers[i].text;
+    }
+
     if (_formKey.currentState!.validate() && !isSubmitting) {
       setState(() => isSubmitting = true);
       try {
-        // อัปเดตข้อมูลสูตร
+        // อัปเดตสูตร
         final recipeBody = jsonEncode({
           'title': titleController.text,
           'description': descriptionController.text,
@@ -161,23 +212,21 @@ class _UpdateRecipeScreenState extends State<UpdateRecipeScreen> {
             children: [
               Expanded(
                 child: TextFormField(
+                  controller: ingredientNameControllers[index],
                   decoration: const InputDecoration(labelText: 'ส่วนผสม'),
-                  initialValue: ingredients[index]['name'],
-                  onChanged: (val) => ingredients[index]['name'] = val,
                   validator: (value) => value!.isEmpty ? 'กรุณากรอกส่วนผสม' : null,
                 ),
               ),
               Expanded(
                 child: TextFormField(
+                  controller: ingredientQuantityControllers[index],
                   decoration: const InputDecoration(labelText: 'ปริมาณ'),
-                  initialValue: ingredients[index]['quantity'],
-                  onChanged: (val) => ingredients[index]['quantity'] = val,
                   validator: (value) => value!.isEmpty ? 'กรุณากรอกปริมาณ' : null,
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
-                onPressed: () => setState(() => ingredients.removeAt(index)),
+                onPressed: () => _removeIngredient(index),
               ),
             ],
           );
@@ -191,15 +240,14 @@ class _UpdateRecipeScreenState extends State<UpdateRecipeScreen> {
             children: [
               Expanded(
                 child: TextFormField(
+                  controller: stepControllers[index],
                   decoration: InputDecoration(labelText: 'ขั้นตอน ${index + 1}'),
-                  initialValue: steps[index]['instruction'],
-                  onChanged: (val) => steps[index]['instruction'] = val,
                   validator: (value) => value!.isEmpty ? 'กรุณากรอกขั้นตอน' : null,
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
-                onPressed: () => setState(() => steps.removeAt(index)),
+                onPressed: () => _removeStep(index),
               ),
             ],
           );

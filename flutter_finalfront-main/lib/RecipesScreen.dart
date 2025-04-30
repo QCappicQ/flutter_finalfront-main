@@ -49,7 +49,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
       );
     }
   }
-
+  //ดึงจากตัว localstorage
   Future<List<String>> _getFavorites() async {
     if (kIsWeb) {
       return html.window.localStorage['favorites']?.split(',').where((id) => id.isNotEmpty).toList() ?? [];
@@ -61,7 +61,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
       return [];
     }
   }
-
+ //ใส่ลง storage
   Future<void> _setFavorites(List<String> favorites) async {
     if (kIsWeb) {
       html.window.localStorage['favorites'] = favorites.join(',');
@@ -72,7 +72,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
       } catch (e) {}
     }
   }
-
+  // load จาก storage
   Future<void> _loadFavoriteStatus() async {
     try {
       final favorites = await _getFavorites();
@@ -291,4 +291,4 @@ class _RecipesScreenState extends State<RecipesScreen> {
       ),
     );
   }
-}
+}   
